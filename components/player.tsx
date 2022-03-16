@@ -21,7 +21,7 @@ const Player = () => {
   const getSource = async () => {
     const data = await agent.Songs.stream(
       currentSong?.streamUrl!,
-      currentSong?.artist!
+      currentSong?.artist! + currentSong?.duration!
     );
     return apiUrl + data.path;
   };
@@ -30,6 +30,7 @@ const Player = () => {
     audioEngine.current!.oncanplay = () => {
       const duration = audioEngine.current!.duration;
       setMaxTime(duration);
+      audioEngine.current!.play();
     };
 
     audioEngine.current!.ontimeupdate = (e: any) => {
@@ -118,7 +119,7 @@ const Player = () => {
   return (
     <div className="w-full fixed bottom-0 flex justify-center pointer-events-none">
       <div className="card lg:w-2/4 lg:rounded-xl w-full bg-neutral-focus rounded-none pointer-events-auto">
-        <div className="card-body w-full h-fit flex lg:flex-row flex-col">
+        <div className="card-body text-white w-full h-fit flex lg:flex-row flex-col">
           <button
             className={`btn my-auto lg:w-20  w-full flex-row justify-center align-middle ${
               playStatus === PlayStatus.LOADING ? 'loading px-0' : ''

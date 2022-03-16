@@ -1,6 +1,6 @@
 import type { NextPage } from 'next';
-import { useRouter } from 'next/router';
-import { useEffect, useMemo, useState } from 'react';
+import Head from 'next/head';
+import { useMemo, useState } from 'react';
 import agent from '../agent/agent';
 import Pagination from '../components/pagination';
 import Player from '../components/player';
@@ -8,6 +8,7 @@ import SearchBar from '../components/search-bar';
 import Song from '../components/song';
 import { PaginatedResult } from '../models/paginated-result';
 import { SongType } from '../models/song';
+import usePlayerContext from '../store/PlayerContext';
 
 interface Props {
   serverPaginatedResult: PaginatedResult<SongType[]> | null;
@@ -15,6 +16,7 @@ interface Props {
 }
 
 const Home: NextPage<Props> = ({ serverPaginatedResult, error }: Props) => {
+  const { currentSong } = usePlayerContext();
   const [paginatedResult, setPaginatedResult] = useState<PaginatedResult<
     SongType[]
   > | null>(serverPaginatedResult);
@@ -26,6 +28,13 @@ const Home: NextPage<Props> = ({ serverPaginatedResult, error }: Props) => {
 
   return (
     <div className="w-full">
+      <div>
+        <Head>
+          <title>
+            {currentSong ? currentSong?.artist : 'Listen to any song!'}
+          </title>
+        </Head>
+      </div>
       <SearchBar setLoadedResult={setLoadedResult} />
 
       {error || !paginatedResult ? (

@@ -78,9 +78,12 @@ const Song = ({ song }: Props) => {
 
   const downloadFile = async () => {
     setDownloadLoading(true);
-    const data = await agent.Songs.stream(song.streamUrl, song.artist);
+    const data = await agent.Songs.stream(
+      song.streamUrl,
+      song.artist + song.duration
+    );
     const downloadLink = apiUrl + data.path;
-    saveAs(downloadLink, song.artist + '.mp3', { autoBom: true });
+    saveAs(downloadLink, song.artist + '.mp3');
     setDownloadLoading(false);
   };
 
