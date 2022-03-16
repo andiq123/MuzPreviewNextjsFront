@@ -19,6 +19,10 @@ export const PlayerContextProvider = ({ children }: Props) => {
     dispatch({ type: Actions.SET_PAUSE });
   };
 
+  const SetStopped = () => {
+    dispatch({ type: Actions.SET_STOPPED });
+  };
+
   const SetLoading = () => {
     dispatch({ type: Actions.SET_LOADING });
   };
@@ -32,6 +36,7 @@ export const PlayerContextProvider = ({ children }: Props) => {
     currentSong: state.currentSong,
     SetPlay,
     SetPause,
+    SetStopped,
     SetLoading,
     SetCurrentSong,
   };

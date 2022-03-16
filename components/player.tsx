@@ -1,4 +1,4 @@
-import { faPause, faPlay } from '@fortawesome/free-solid-svg-icons';
+import { faP, faPause, faPlay } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { useEffect, useRef, useState } from 'react';
 import agent from '../agent/agent';
@@ -7,12 +7,13 @@ import { PlayStatus } from '../store/playerReducer';
 
 const Player = () => {
   const apiUrl = process.env.NEXT_PUBLIC_BASE_URL;
-  const { playStatus, currentSong, SetPlay, SetPause, SetLoading } =
+  const { playStatus, currentSong, SetPlay, SetPause, SetLoading, SetStopped } =
     usePlayerContext();
   const [timer, setTimer] = useState(0);
   const [changeTimer, setChangeTimer] = useState(timer);
   const [maxTime, setMaxTime] = useState(0);
   const [volume, setVolume] = useState(1);
+  const [iconState, setIconState] = useState(faPlay);
   const audioEngine = useRef<HTMLAudioElement | undefined>(
     typeof Audio !== 'undefined' ? new Audio() : undefined
   );
@@ -27,29 +28,29 @@ const Player = () => {
 
   useEffect(() => {
     audioEngine.current!.oncanplay = () => {
-      setMaxTime(audioEngine.current!.duration);
-      audioEngine.current?.play();
-      SetPlay!();
-    };
-
-    audioEngine.current!.onended = () => {
-      SetPause!();
+      const duration = audioEngine.current!.duration;
+      setMaxTime(duration);
     };
 
     audioEngine.current!.ontimeupdate = (e: any) => {
       const time = e.target.currentTime;
       setTimer(time);
     };
+
+    audioEngine.current!.onended = () => {
+      SetStopped!();
+    };
   }, []);
 
   useEffect(() => {
-    if (!currentSong) return;
-
-    SetLoading!();
-    getSource().then((src) => {
+    (async () => {
+      if (!currentSong) return;
+      SetLoading!();
+      const src = await getSource();
       audioEngine.current!.src = src;
-    });
-  }, [currentSong?.id]);
+      SetPlay!();
+    })();
+  }, [currentSong]);
 
   useEffect(() => {
     audioEngine.current!.currentTime = changeTimer;
@@ -64,25 +65,40 @@ const Player = () => {
     handlePlayerPlayStatus();
   }, [playStatus]);
 
+  //handle audio engine by status
   const handlePlayerPlayStatus = () => {
     switch (playStatus) {
       case PlayStatus.PAUSED:
-        return audioEngine.current?.pause();
+        audioEngine.current?.pause();
+        setIconState(faPlay);
+        break;
       case PlayStatus.PLAYING:
-        return audioEngine.current?.play();
+        audioEngine.current?.play();
+        setIconState(faPause);
+        break;
+      case PlayStatus.STOPPED:
+        audioEngine.current?.pause();
+        setIconState(faPlay);
+        break;
       default:
-        return audioEngine.current?.pause();
+        setIconState(faPause);
+        // audioEngine.current?.pause();
+        break;
     }
   };
 
+  //set status by opositing status
   const handlePlayPause = () => {
     switch (playStatus) {
       case PlayStatus.PLAYING:
-        return SetPause!();
+        SetPause!();
+        break;
       case PlayStatus.PAUSED:
-        return SetPlay!();
+        SetPlay!();
+        break;
       default:
-        return SetPause!();
+        // SetPlay!();
+        break;
     }
   };
 
@@ -109,18 +125,9 @@ const Player = () => {
             } `}
             onClick={handlePlayPause}
           >
-            {(() => {
-              switch (playStatus) {
-                case PlayStatus.PLAYING:
-                  return <FontAwesomeIcon icon={faPause} />;
-                case PlayStatus.PAUSED:
-                  return <FontAwesomeIcon icon={faPlay} />;
-                case PlayStatus.LOADING:
-                  return <></>;
-                default:
-                  return <FontAwesomeIcon icon={faPlay} />;
-              }
-            })()}
+            {playStatus !== PlayStatus.LOADING && (
+              <FontAwesomeIcon icon={iconState} />
+            )}
           </button>
           <div className="flex flex-col w-full">
             <div>

@@ -6,55 +6,88 @@ import { useEffect, useState } from 'react';
 import usePlayerContext from '../store/PlayerContext';
 import agent from '../agent/agent';
 import { saveAs } from 'file-saver';
+import { trimIfTooLong } from '../utils/utils';
 
 interface Props {
   song: SongType;
 }
 
 const Song = ({ song }: Props) => {
-  const LIMIT_CHARS = 40;
   const apiUrl = process.env.NEXT_PUBLIC_BASE_URL;
   const { playStatus, currentSong, SetPause, SetPlay, SetCurrentSong } =
     usePlayerContext();
-  const [playStatusLocal, setPlayStatusLocal] = useState(PlayStatus.PAUSED);
+  const [iconState, setIconState] = useState(faPlay);
+  const [loadingDownload, setDownloadLoading] = useState(false);
+  const [playLoading, setPlayLoading] = useState(false);
 
   useEffect(() => {
     if (currentSong?.id !== song.id) {
-      setPlayStatusLocal(PlayStatus.PAUSED);
+      setIconState(faPlay);
       return;
     }
-
-    setPlayStatusLocal(playStatus);
-  }, [playStatus, currentSong?.id]);
+    setIconStatus();
+  }, [playStatus]);
 
   const handleSetCurrentSong = () => {
     if (currentSong?.id !== song.id) {
-      return SetCurrentSong!(song);
+      SetCurrentSong!(song);
+      return;
     }
+    setRemotePlayStatus();
+  };
 
-    switch (playStatusLocal) {
+  //set the oposite status on click
+  const setRemotePlayStatus = () => {
+    switch (playStatus) {
       case PlayStatus.PLAYING:
-        return SetPause!();
+        SetPause!();
+        break;
       case PlayStatus.PAUSED:
-        return SetPlay!();
+        SetPlay!();
+        break;
+      case PlayStatus.STOPPED:
+        SetPlay!();
+        break;
       default:
-        return SetPause!();
+        SetPause!();
+        break;
     }
   };
 
-  const trimIfTooLong = (str: string, limit: number) =>
-    str.length > limit ? `${str.substring(0, limit)}...` : str;
+  //set the icon status direct
+  const setIconStatus = () => {
+    switch (playStatus) {
+      case PlayStatus.PLAYING:
+        setIconState(faPause);
+        setPlayLoading(false);
+        break;
+      case PlayStatus.PAUSED:
+        setIconState(faPlay);
+        break;
+      case PlayStatus.STOPPED:
+        setIconState(faPlay);
+        break;
+      case PlayStatus.LOADING:
+        setPlayLoading(true);
+        break;
+      default:
+        setIconState(faPlay);
+        break;
+    }
+  };
 
   const downloadFile = async () => {
+    setDownloadLoading(true);
     const data = await agent.Songs.stream(song.streamUrl, song.artist);
     const downloadLink = apiUrl + data.path;
-    saveAs(downloadLink, song.artist + '.mp3');
+    saveAs(downloadLink, song.artist + '.mp3', { autoBom: true });
+    setDownloadLoading(false);
   };
 
   song = {
     ...song,
-    artist: trimIfTooLong(song.artist, LIMIT_CHARS),
-    title: trimIfTooLong(song.title, LIMIT_CHARS),
+    artist: trimIfTooLong(song.artist),
+    title: trimIfTooLong(song.title),
   };
 
   return (
@@ -63,23 +96,12 @@ const Song = ({ song }: Props) => {
         <div className="card-body flex flex-row py-1 px-4 text-xs">
           <button
             onClick={handleSetCurrentSong}
-            // disabled={playStatus === PlayStatus.LOADING}
+            disabled={playStatus === PlayStatus.LOADING}
             className={`btn w-20 my-auto flex-row justify-center align-middle ${
-              playStatusLocal === PlayStatus.LOADING ? 'loading px-0' : ''
+              playLoading ? 'loading px-0' : ''
             }`}
           >
-            {(() => {
-              switch (playStatusLocal) {
-                case PlayStatus.PLAYING:
-                  return <FontAwesomeIcon icon={faPause} />;
-                case PlayStatus.PAUSED:
-                  return <FontAwesomeIcon icon={faPlay} />;
-                case PlayStatus.LOADING:
-                  return <></>;
-                default:
-                  return <FontAwesomeIcon icon={faPlay} />;
-              }
-            })()}
+            {!playLoading && <FontAwesomeIcon icon={iconState} />}
           </button>
 
           <div className="flex flex-col">
@@ -87,8 +109,13 @@ const Song = ({ song }: Props) => {
             <p>{song.title}</p>
             <p>{song.duration}</p>
           </div>
-          <button onClick={downloadFile} className="btn ml-auto my-auto">
-            <FontAwesomeIcon icon={faDownload} />
+          <button
+            onClick={downloadFile}
+            className={`btn ml-auto my-auto ${
+              loadingDownload && 'loading w-fit'
+            }`}
+          >
+            {!loadingDownload && <FontAwesomeIcon icon={faDownload} />}
           </button>
         </div>
       </div>

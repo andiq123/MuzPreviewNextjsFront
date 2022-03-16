@@ -1,23 +1,36 @@
-import Link from 'next/link';
 import { useRouter } from 'next/router';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
+import agent from '../agent/agent';
+import { PaginatedResult } from '../models/paginated-result';
+import { SongType } from '../models/song';
 
-const SearchBar = () => {
+interface Props {
+  setLoadedResult: (result: PaginatedResult<SongType[]>) => void;
+}
+
+const SearchBar = ({ setLoadedResult }: Props) => {
   const router = useRouter();
   const [searchValue, setSearchValue] = useState<string>(
     (router.query.query as string) || ''
   );
-
-  useEffect(() => {
-    setLoading(false);
-  }, [router]);
-
   const [loading, setLoading] = useState(false);
 
+  const handleSearch = async (e: any) => {
+    e.preventDefault();
+
+    setLoading(true);
+    const result = await agent.Songs.list(searchValue);
+    setLoading(false);
+    setLoadedResult(result);
+  };
+
   return (
-    <div className="card mt-2 bg-base-300 rounded-none lg:rounded-xl lg:mx-auto lg:w-fit w-full">
+    <div className="card mt-2 bg-base-300  rounded-none lg:rounded-xl lg:mx-auto lg:w-3/6 w-full">
       <div className="card-body">
-        <form className="flex lg:flex-row flex-col lg:gap-10">
+        <form
+          className="flex lg:flex-row flex-col lg:gap-10"
+          onSubmit={handleSearch}
+        >
           <input
             name="search"
             type="text"
@@ -27,23 +40,12 @@ const SearchBar = () => {
             onInput={(e: any) => setSearchValue(e.target.value)}
           />
           <div className="card-actions justify-center lg:my-auto mt-2 ">
-            <Link
-              href={{
-                pathname: '/',
-                query: {
-                  query: searchValue,
-                  page: 1,
-                },
-              }}
+            <button
+              className={`btn lg:w-32 w-full ${loading && 'loading'}`}
+              type="submit"
             >
-              <button
-                className={`btn w-full ${loading ? 'loading' : ''}`}
-                onClick={() => setLoading(true)}
-                type="submit"
-              >
-                Search
-              </button>
-            </Link>
+              Search
+            </button>
           </div>
         </form>
       </div>
