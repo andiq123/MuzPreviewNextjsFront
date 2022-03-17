@@ -26,7 +26,7 @@ const SearchBar = ({ setLoadedResult }: Props) => {
 
     try {
       const results = searchValue
-        ? await agent.Songs.list(searchValue)
+        ? await agent.Songs.list(searchValue, 1)
         : await agent.Songs.getMainTracks();
       replaceStateWithQuery({ query: searchValue, page: '1' });
       setLoadedResult(results, false);
