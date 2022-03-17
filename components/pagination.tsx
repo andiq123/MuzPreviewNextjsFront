@@ -1,5 +1,6 @@
 import Link from 'next/link';
 import { useRouter } from 'next/router';
+import { useEffect } from 'react';
 import { PaginatedResult } from '../models/paginated-result';
 import { SongType } from '../models/song';
 
@@ -8,7 +9,9 @@ interface Props {
 }
 
 const Pagination = ({ pagination }: Props) => {
-  const router = useRouter();
+  const url = new URL(window.location.toString());
+  const query = url.searchParams.get('query');
+
   const pages = new Array(
     pagination.totalPages < pagination.pageNumber
       ? pagination.totalPages + 1
@@ -25,7 +28,7 @@ const Pagination = ({ pagination }: Props) => {
           href={{
             pathname: '/',
             query: {
-              query: router.query.query,
+              query: query,
               page: x,
             },
           }}
