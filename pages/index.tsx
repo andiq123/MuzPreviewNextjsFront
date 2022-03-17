@@ -1,6 +1,6 @@
 import type { NextPage } from 'next';
 import Head from 'next/head';
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { easings, useSpring, config, animated } from 'react-spring';
 import agent from '../agent/agent';
 import Pagination from '../components/pagination';
@@ -29,6 +29,11 @@ const Home: NextPage<Props> = ({ serverPaginatedResult, error }: Props) => {
   const [paginatedResult, setPaginatedResult] = useState<PaginatedResult<
     SongType[]
   > | null>(serverPaginatedResult);
+
+  useEffect(() => {
+    setPaginatedResult(serverPaginatedResult);
+  }, [serverPaginatedResult]);
+
   const [errorSongs, setErrorSongs] = useState(error);
   const songs = useMemo(() => paginatedResult?.items, [paginatedResult]);
 
@@ -68,12 +73,13 @@ const Home: NextPage<Props> = ({ serverPaginatedResult, error }: Props) => {
           {songs?.map((x) => (
             <Song key={x.id} song={x} />
           ))}
-          <div className="mb-64">
-            <Pagination pagination={serverPaginatedResult!} />
-          </div>
         </animated.div>
       )}
-
+      {!errorSongs && paginatedResult!.totalPages > 0 && (
+        <div className="mb-64">
+          <Pagination pagination={paginatedResult!} />
+        </div>
+      )}
       <Player />
     </div>
   );

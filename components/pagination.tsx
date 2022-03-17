@@ -1,6 +1,6 @@
 import Link from 'next/link';
 import { useRouter } from 'next/router';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { PaginatedResult } from '../models/paginated-result';
 import { SongType } from '../models/song';
 
@@ -10,10 +10,10 @@ interface Props {
 
 const Pagination = ({ pagination }: Props) => {
   const router = useRouter();
-  const pagi = { ...pagination, items: undefined };
-
   const pages = new Array(
-    pagi.totalPages < pagi.pageNumber ? pagi.totalPages + 1 : pagi.totalPages
+    pagination.totalPages < pagination.pageNumber
+      ? pagination.totalPages + 1
+      : pagination.totalPages
   )
     .fill(1)
     .map((_, i) => i + 1);
@@ -32,7 +32,7 @@ const Pagination = ({ pagination }: Props) => {
           }}
         >
           <button
-            className={`btn ${pagi.pageNumber === x ? 'btn-active' : ''}`}
+            className={`btn ${pagination.pageNumber === x ? 'btn-active' : ''}`}
           >
             {x}
           </button>
