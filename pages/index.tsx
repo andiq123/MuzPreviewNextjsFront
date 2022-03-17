@@ -1,7 +1,7 @@
 import type { NextPage } from 'next';
 import Head from 'next/head';
 import { useEffect, useMemo, useState } from 'react';
-import { easings, useSpring, config, animated } from 'react-spring';
+import { easings, useSpring, animated } from 'react-spring';
 import agent from '../agent/agent';
 import Pagination from '../components/pagination';
 import Player from '../components/player';

@@ -1,6 +1,5 @@
 import Link from 'next/link';
 import { useRouter } from 'next/router';
-import { useEffect, useState } from 'react';
 import { PaginatedResult } from '../models/paginated-result';
 import { SongType } from '../models/song';
 
