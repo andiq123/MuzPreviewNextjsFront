@@ -1,11 +1,21 @@
-import { faP, faPause, faPlay } from '@fortawesome/free-solid-svg-icons';
+import { faPause, faPlay } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { useEffect, useRef, useState } from 'react';
 import agent from '../agent/agent';
 import usePlayerContext from '../store/PlayerContext';
 import { PlayStatus } from '../store/playerReducer';
+import { useSpring, animated, config, easings } from 'react-spring';
 
 const Player = () => {
+  const props = useSpring({
+    to: { opacity: 1, transform: 'translateX(0)' },
+    from: { opacity: 0, transform: 'translateY(5rem)' },
+    config: {
+      ...config.gentle,
+      duration: 1200,
+      easing: easings.easeInSine,
+    },
+  });
   const apiUrl = process.env.NEXT_PUBLIC_BASE_URL;
   const { playStatus, currentSong, SetPlay, SetPause, SetLoading, SetStopped } =
     usePlayerContext();
@@ -18,18 +28,11 @@ const Player = () => {
     typeof Audio !== 'undefined' ? new Audio() : undefined
   );
 
-  const getSource = async () => {
-    const data = await agent.Songs.stream(
-      currentSong?.streamUrl!,
-      currentSong?.artist! + currentSong?.duration!
-    );
-    return apiUrl + data.path;
-  };
-
   useEffect(() => {
     audioEngine.current!.oncanplay = () => {
       const duration = audioEngine.current!.duration;
       setMaxTime(duration);
+      SetPlay!();
       audioEngine.current!.play();
     };
 
@@ -49,7 +52,7 @@ const Player = () => {
       SetLoading!();
       const src = await getSource();
       audioEngine.current!.src = src;
-      SetPlay!();
+      audioEngine.current!.load();
     })();
   }, [currentSong]);
 
@@ -65,6 +68,14 @@ const Player = () => {
   useEffect(() => {
     handlePlayerPlayStatus();
   }, [playStatus]);
+
+  const getSource = async () => {
+    const data = await agent.Songs.stream(
+      currentSong?.streamUrl!,
+      currentSong?.artist! + currentSong?.duration!
+    );
+    return apiUrl + data.path;
+  };
 
   //handle audio engine by status
   const handlePlayerPlayStatus = () => {
@@ -83,7 +94,6 @@ const Player = () => {
         break;
       default:
         setIconState(faPause);
-        // audioEngine.current?.pause();
         break;
     }
   };
@@ -97,8 +107,10 @@ const Player = () => {
       case PlayStatus.PAUSED:
         SetPlay!();
         break;
+      case PlayStatus.STOPPED:
+        SetPlay!();
+        break;
       default:
-        // SetPlay!();
         break;
     }
   };
@@ -115,10 +127,20 @@ const Player = () => {
   };
 
   if (!currentSong) return null;
-
+  // bg-neutral-focus
   return (
     <div className="w-full fixed bottom-0 flex justify-center pointer-events-none">
-      <div className="card lg:w-2/4 lg:rounded-xl w-full bg-neutral-focus rounded-none pointer-events-auto">
+      <animated.div
+        style={props}
+        className={`
+        card 
+        lg:w-2/4 backdrop-blur-sm
+        lg:rounded-xl
+        w-full
+        rounded-none
+        pointer-events-auto 
+        `}
+      >
         <div className="card-body text-white w-full h-fit flex lg:flex-row flex-col">
           <button
             className={`btn my-auto lg:w-20  w-full flex-row justify-center align-middle ${
@@ -160,7 +182,7 @@ const Player = () => {
             />
           </div>
         </div>
-      </div>
+      </animated.div>
     </div>
   );
 };

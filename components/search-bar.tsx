@@ -5,7 +5,10 @@ import { PaginatedResult } from '../models/paginated-result';
 import { SongType } from '../models/song';
 
 interface Props {
-  setLoadedResult: (result: PaginatedResult<SongType[]>) => void;
+  setLoadedResult: (
+    result: PaginatedResult<SongType[]> | null,
+    failure: boolean
+  ) => void;
 }
 
 const SearchBar = ({ setLoadedResult }: Props) => {
@@ -19,9 +22,17 @@ const SearchBar = ({ setLoadedResult }: Props) => {
     e.preventDefault();
 
     setLoading(true);
-    const result = await agent.Songs.list(searchValue);
+
+    try {
+      const results = searchValue
+        ? await agent.Songs.list(searchValue)
+        : await agent.Songs.getMainTracks();
+      setLoadedResult(results, false);
+    } catch (error) {
+      setLoadedResult(null, true);
+    }
+
     setLoading(false);
-    setLoadedResult(result);
   };
 
   return (

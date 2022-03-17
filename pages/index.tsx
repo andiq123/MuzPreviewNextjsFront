@@ -20,9 +20,17 @@ const Home: NextPage<Props> = ({ serverPaginatedResult, error }: Props) => {
   const [paginatedResult, setPaginatedResult] = useState<PaginatedResult<
     SongType[]
   > | null>(serverPaginatedResult);
+  const [errorSongs, setErrorSongs] = useState(error);
   const songs = useMemo(() => paginatedResult?.items, [paginatedResult]);
 
-  const setLoadedResult = (result: PaginatedResult<SongType[]>) => {
+  const setLoadedResult = (
+    result: PaginatedResult<SongType[]> | null,
+    failure: boolean
+  ) => {
+    setErrorSongs(failure);
+    if (failure) {
+      return setPaginatedResult(null);
+    }
     setPaginatedResult(result);
   };
 
@@ -37,7 +45,7 @@ const Home: NextPage<Props> = ({ serverPaginatedResult, error }: Props) => {
       </div>
       <SearchBar setLoadedResult={setLoadedResult} />
 
-      {error || !paginatedResult ? (
+      {errorSongs || !paginatedResult ? (
         <div className="card mt-2 bg-base-300 rounded-none lg:rounded-xl lg:mx-auto lg:w-fit w-full">
           <div className="card-body">
             <p>No music found with this criteria</p>
@@ -51,7 +59,7 @@ const Home: NextPage<Props> = ({ serverPaginatedResult, error }: Props) => {
         </div>
       )}
 
-      {paginatedResult!.totalPages > 0 && (
+      {paginatedResult && paginatedResult?.totalPages > 0 && (
         <div className="mb-64">
           <Pagination pagination={serverPaginatedResult!} />
         </div>
