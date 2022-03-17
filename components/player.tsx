@@ -42,6 +42,7 @@ const Player = () => {
 
     audioEngine.current!.onended = () => {
       SetStopped!();
+      setTimer(0);
     };
   }, []);
 

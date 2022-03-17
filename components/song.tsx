@@ -96,7 +96,7 @@ const Song = ({ song }: Props) => {
   return (
     <>
       <div className="card w-full bg-base-300 my-1 rounded-none lg:rounded-xl">
-        <div className="card-body flex flex-row py-1 px-4 text-xs">
+        <div className="card-body text-white flex flex-row py-1 px-4 text-xs">
           <button
             onClick={handleSetCurrentSong}
             disabled={playStatus === PlayStatus.LOADING}
