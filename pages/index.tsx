@@ -1,6 +1,7 @@
 import type { NextPage } from 'next';
 import Head from 'next/head';
 import { useMemo, useState } from 'react';
+import { easings, useSpring, config, animated } from 'react-spring';
 import agent from '../agent/agent';
 import Pagination from '../components/pagination';
 import Player from '../components/player';
@@ -16,6 +17,14 @@ interface Props {
 }
 
 const Home: NextPage<Props> = ({ serverPaginatedResult, error }: Props) => {
+  const props = useSpring({
+    to: { opacity: 1, transform: 'translateX(0)' },
+    from: { opacity: 0, transform: 'translateY(5rem)' },
+    config: {
+      duration: 200,
+      easing: easings.easeInSine,
+    },
+  });
   const { currentSong } = usePlayerContext();
   const [paginatedResult, setPaginatedResult] = useState<PaginatedResult<
     SongType[]
@@ -46,17 +55,20 @@ const Home: NextPage<Props> = ({ serverPaginatedResult, error }: Props) => {
       <SearchBar setLoadedResult={setLoadedResult} />
 
       {errorSongs || !paginatedResult ? (
-        <div className="card mt-2 bg-base-300 rounded-none lg:rounded-xl lg:mx-auto lg:w-fit w-full">
+        <animated.div
+          style={props}
+          className="card mt-2 bg-base-300 rounded-none lg:rounded-xl lg:mx-auto lg:w-fit w-full"
+        >
           <div className="card-body">
             <p>No music found with this criteria</p>
           </div>
-        </div>
+        </animated.div>
       ) : (
-        <div className="mx-auto my-5 lg:w-3/5 w-full">
+        <animated.div style={props} className="mx-auto my-5 lg:w-3/5 w-full">
           {songs?.map((x) => (
             <Song key={x.id} song={x} />
           ))}
-        </div>
+        </animated.div>
       )}
 
       {paginatedResult && paginatedResult?.totalPages > 0 && (

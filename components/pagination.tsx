@@ -12,15 +12,6 @@ const Pagination = ({ pagination }: Props) => {
   const router = useRouter();
   const pagi = { ...pagination, items: undefined };
 
-  useEffect(() => {
-    for (let i = 0; i < pagi.totalPages; i++) {
-      if (i === pagi.pageNumber) return;
-      router.prefetch(`/?query=${router.query.query}&page=${i + 1}`, '/', {
-        priority: true,
-      });
-    }
-  }, [router]);
-
   const pages = new Array(
     pagi.totalPages < pagi.pageNumber ? pagi.totalPages + 1 : pagi.totalPages
   )

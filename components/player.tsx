@@ -4,15 +4,14 @@ import { useEffect, useRef, useState } from 'react';
 import agent from '../agent/agent';
 import usePlayerContext from '../store/PlayerContext';
 import { PlayStatus } from '../store/playerReducer';
-import { useSpring, animated, config, easings } from 'react-spring';
+import { useSpring, animated, easings } from 'react-spring';
 
 const Player = () => {
   const props = useSpring({
     to: { opacity: 1, transform: 'translateX(0)' },
     from: { opacity: 0, transform: 'translateY(5rem)' },
     config: {
-      ...config.gentle,
-      duration: 1200,
+      duration: 1500,
       easing: easings.easeInSine,
     },
   });
@@ -127,14 +126,15 @@ const Player = () => {
   };
 
   if (!currentSong) return null;
-  // bg-neutral-focus
+
   return (
     <div className="w-full fixed bottom-0 flex justify-center pointer-events-none">
       <animated.div
         style={props}
         className={`
         card 
-        lg:w-2/4 backdrop-blur-sm
+        lg:w-2/4
+        bg-neutral-focus
         lg:rounded-xl
         w-full
         rounded-none

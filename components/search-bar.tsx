@@ -3,6 +3,7 @@ import { useState } from 'react';
 import agent from '../agent/agent';
 import { PaginatedResult } from '../models/paginated-result';
 import { SongType } from '../models/song';
+import { replaceStateWithQuery } from '../utils/utils';
 
 interface Props {
   setLoadedResult: (
@@ -27,6 +28,7 @@ const SearchBar = ({ setLoadedResult }: Props) => {
       const results = searchValue
         ? await agent.Songs.list(searchValue)
         : await agent.Songs.getMainTracks();
+      replaceStateWithQuery({ query: searchValue, page: '1' });
       setLoadedResult(results, false);
     } catch (error) {
       setLoadedResult(null, true);
