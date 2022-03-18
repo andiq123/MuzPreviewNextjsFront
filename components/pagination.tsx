@@ -1,4 +1,6 @@
 import Link from 'next/link';
+import { useRouter } from 'next/router';
+import { useEffect, useRef, useState } from 'react';
 import { PaginatedResult } from '../models/paginated-result';
 import { SongType } from '../models/song';
 
@@ -7,8 +9,24 @@ interface Props {
 }
 
 const Pagination = ({ pagination }: Props) => {
-  const url = new URL(window.location.toString());
-  const searchQuery = url.searchParams.get('query');
+  const router = useRouter();
+  const [searchQuery, setSearchQuery] = useState('');
+
+  useEffect(() => {
+    const url =
+      typeof URL !== undefined ? new URL(window.location.toString()) : null;
+    const routerQuery = router.query.query as string;
+    if (!url) {
+      return setSearchQuery(routerQuery);
+    }
+
+    const searchQueryToUpdate = url.searchParams.get('query');
+    if (!searchQueryToUpdate) {
+      return setSearchQuery(routerQuery);
+    }
+
+    return setSearchQuery(searchQueryToUpdate);
+  }, [router]);
 
   const pages = new Array(
     pagination.totalPages < pagination.pageNumber

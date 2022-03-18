@@ -33,7 +33,6 @@ const Home: NextPage<Props> = ({ serverPaginatedResult, error }: Props) => {
   useEffect(() => {
     setPaginatedResult(serverPaginatedResult);
   }, [serverPaginatedResult]);
-
   const [errorSongs, setErrorSongs] = useState(error);
   const songs = useMemo(() => paginatedResult?.items, [paginatedResult]);
 
@@ -75,7 +74,8 @@ const Home: NextPage<Props> = ({ serverPaginatedResult, error }: Props) => {
           ))}
         </animated.div>
       )}
-      {!errorSongs && paginatedResult!.totalPages > 0 && (
+
+      {!errorSongs && paginatedResult && paginatedResult.totalPages > 0 && (
         <div className="mb-64">
           <Pagination pagination={paginatedResult!} />
         </div>
