@@ -15,7 +15,7 @@ interface Props {
 const SearchBar = ({ setLoadedResult }: Props) => {
   const router = useRouter();
   const [searchValue, setSearchValue] = useState<string>(
-    (router.query.query as string).replace('%20', ' ') || ''
+    (router.query.query as string)?.replace('%20', ' ') || ''
   );
   const [loading, setLoading] = useState(false);
 
