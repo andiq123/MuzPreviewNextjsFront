@@ -15,7 +15,7 @@ interface Props {
 const SearchBar = ({ setLoadedResult }: Props) => {
   const router = useRouter();
   const [searchValue, setSearchValue] = useState<string>(
-    (router.query.query as string) || ''
+    (router.query.query as string).replace('%20', ' ') || ''
   );
   const [loading, setLoading] = useState(false);
 
@@ -38,7 +38,7 @@ const SearchBar = ({ setLoadedResult }: Props) => {
   };
 
   return (
-    <div className="card mt-2 bg-base-300  rounded-none lg:rounded-xl lg:mx-auto lg:w-3/6 w-full">
+    <div className="card mt-2 bg-base-300 rounded-none lg:rounded-xl lg:mx-auto lg:w-3/6 w-full">
       <div className="card-body">
         <form
           className="flex lg:flex-row flex-col lg:gap-10"
