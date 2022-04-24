@@ -17,7 +17,8 @@ const SearchBar = ({ setLoadedResult }: Props) => {
   const { autoPlay, SetAutoPlay } = usePlayerContext();
   const router = useRouter();
   const [searchValue, setSearchValue] = useState<string>(
-    (router.query.query as string)?.replace('%20', ' ') || ''
+    (router.query.query as string)?.replace('%20', ' ').replace('%2520', ' ') ||
+      ''
   );
   const [loading, setLoading] = useState(false);
 
