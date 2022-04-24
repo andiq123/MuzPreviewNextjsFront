@@ -37,7 +37,7 @@ const Pagination = ({ pagination }: Props) => {
     .map((_, i) => i + 1);
 
   return (
-    <div className="btn-group w-fit mx-auto mt-5">
+    <div className="btn-group w-fit mx-auto mt-5 shadow-lg">
       {pages.map((x) => (
         <Link
           key={x}

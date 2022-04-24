@@ -66,7 +66,7 @@ const Home: NextPage<Props> = ({ serverPaginatedResult, error }: Props) => {
       {errorSongs || !paginatedResult ? (
         <animated.div
           style={props}
-          className="card mt-2 bg-base-300 rounded-none lg:rounded-xl lg:mx-auto lg:w-fit w-full"
+          className="card mt-2 bg-base-300 bg-opacity-50 backdrop-blur-3xl shadow-lg rounded-none lg:rounded-xl lg:mx-auto lg:w-fit w-full"
         >
           <div className="card-body">
             <p>No music found with this criteria</p>
