@@ -10,16 +10,22 @@ export const enum PlayStatus {
 export interface PlayerState {
   playStatus: PlayStatus;
   currentSong: SongType | null;
+  autoPlay: boolean;
+  playList: SongType[];
   SetPlay?: () => void;
   SetPause?: () => void;
   SetLoading?: () => void;
   SetStopped?: () => void;
   SetCurrentSong?: (song: SongType) => void;
+  SetAutoPlay?: (autoPlay: boolean) => void;
+  SetPlaylist?: (playlist: SongType[]) => void;
 }
 
 export const initialState: PlayerState = {
   playStatus: PlayStatus.STOPPED,
   currentSong: null,
+  autoPlay: false,
+  playList: [],
 };
 
 export const enum Actions {
@@ -29,6 +35,8 @@ export const enum Actions {
   SET_STOPPED = 'SET_STOPPED',
   SET_CURRENT_SONG = 'SET_CURRENT_SONG',
   SET_PROGRESS = 'SET_PROGRESS',
+  SET_AUTO_PLAY = 'SET_AUTO_PLAY',
+  SET_PLAYLIST = 'SET_PLAYLIST',
 }
 
 export const PlayerReducer = (
@@ -60,6 +68,16 @@ export const PlayerReducer = (
       return {
         ...state,
         currentSong: action.payload,
+      };
+    case Actions.SET_AUTO_PLAY:
+      return {
+        ...state,
+        autoPlay: action.payload,
+      };
+    case Actions.SET_PLAYLIST:
+      return {
+        ...state,
+        playList: action.payload,
       };
     default:
       console.log('error in reducer');

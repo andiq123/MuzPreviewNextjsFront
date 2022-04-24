@@ -16,8 +16,17 @@ const Player = () => {
     },
   });
   const apiUrl = process.env.NEXT_PUBLIC_BASE_URL;
-  const { playStatus, currentSong, SetPlay, SetPause, SetLoading, SetStopped } =
-    usePlayerContext();
+  const {
+    playStatus,
+    currentSong,
+    autoPlay,
+    playList,
+    SetPlay,
+    SetPause,
+    SetLoading,
+    SetStopped,
+    SetCurrentSong,
+  } = usePlayerContext();
   const [timer, setTimer] = useState(0);
   const [changeTimer, setChangeTimer] = useState(timer);
   const [maxTime, setMaxTime] = useState(0);
@@ -47,13 +56,7 @@ const Player = () => {
   }, []);
 
   useEffect(() => {
-    (async () => {
-      if (!currentSong) return;
-      SetLoading!();
-      const src = await getSource();
-      audioEngine.current!.src = src;
-      audioEngine.current!.load();
-    })();
+    changeSrc();
   }, [currentSong]);
 
   useEffect(() => {
@@ -67,7 +70,40 @@ const Player = () => {
   //handle remote status change
   useEffect(() => {
     handlePlayerPlayStatus();
+
+    //handle autoPlay
+    const isGoodToGoNext =
+      playStatus === PlayStatus.STOPPED &&
+      autoPlay &&
+      currentSong &&
+      playList.length > 0;
+
+    if (!isGoodToGoNext) {
+      return;
+    }
+
+    const indexOfCurrent = playList.findIndex((x) => x.id === currentSong!.id);
+    if (indexOfCurrent === -1) {
+      return;
+    }
+
+    const nextSong = playList[indexOfCurrent + 1];
+    if (!nextSong) {
+      return;
+    }
+
+    SetLoading!();
+    SetCurrentSong!(nextSong);
   }, [playStatus]);
+
+  //change src
+  const changeSrc = async () => {
+    if (!currentSong) return;
+    SetLoading!();
+    const src = await getSource();
+    audioEngine.current!.src = src;
+    audioEngine.current!.load();
+  };
 
   const getSource = async () => {
     const data = await agent.Songs.stream(

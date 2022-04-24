@@ -25,7 +25,7 @@ const Home: NextPage<Props> = ({ serverPaginatedResult, error }: Props) => {
       easing: easings.easeInSine,
     },
   });
-  const { currentSong } = usePlayerContext();
+  const { currentSong, SetPlaylist } = usePlayerContext();
   const [paginatedResult, setPaginatedResult] = useState<PaginatedResult<
     SongType[]
   > | null>(serverPaginatedResult);
@@ -33,8 +33,13 @@ const Home: NextPage<Props> = ({ serverPaginatedResult, error }: Props) => {
   useEffect(() => {
     setPaginatedResult(serverPaginatedResult);
   }, [serverPaginatedResult]);
+
   const [errorSongs, setErrorSongs] = useState(error);
   const songs = useMemo(() => paginatedResult?.items, [paginatedResult]);
+
+  useEffect(() => {
+    SetPlaylist!(songs || []);
+  }, [songs]);
 
   const setLoadedResult = (
     result: PaginatedResult<SongType[]> | null,

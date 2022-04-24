@@ -31,14 +31,26 @@ export const PlayerContextProvider = ({ children }: Props) => {
     dispatch({ type: Actions.SET_CURRENT_SONG, payload: song });
   };
 
+  const SetAutoPlay = (autoPlay: boolean) => {
+    dispatch({ type: Actions.SET_AUTO_PLAY, payload: autoPlay });
+  };
+
+  const SetPlaylist = (playlist: SongType[]) => {
+    dispatch({ type: Actions.SET_PLAYLIST, payload: playlist });
+  };
+
   const value = {
     playStatus: state.playStatus,
     currentSong: state.currentSong,
+    autoPlay: state.autoPlay,
+    playList: state.playList,
     SetPlay,
     SetPause,
     SetStopped,
     SetLoading,
     SetCurrentSong,
+    SetAutoPlay,
+    SetPlaylist,
   };
   return (
     <PlayerContext.Provider value={value}>{children}</PlayerContext.Provider>
