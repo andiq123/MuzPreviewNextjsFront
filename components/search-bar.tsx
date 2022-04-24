@@ -40,7 +40,7 @@ const SearchBar = ({ setLoadedResult }: Props) => {
   };
 
   return (
-    <div className="card mt-2 bg-base-300 rounded-none lg:rounded-xl lg:mx-auto lg:w-3/6 w-full">
+    <div className="card mt-2 bg-base-300 bg-opacity-50 backdrop-blur-3xl rounded-none lg:rounded-xl lg:mx-auto lg:w-3/6 w-full">
       <div className="card-body">
         <form className="flex flex-col" onSubmit={handleSearch}>
           <div className="flex lg:flex-row flex-col lg:gap-10">

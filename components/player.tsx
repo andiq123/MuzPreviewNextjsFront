@@ -165,22 +165,24 @@ const Player = () => {
   if (!currentSong) return null;
 
   return (
-    <div className="w-full fixed bottom-0 flex justify-center pointer-events-none">
+    <div className="w-full fixed bottom-0 flex justify-center pointer-events-none ">
       <animated.div
         style={props}
         className={`
         card 
         lg:w-2/4
-        bg-neutral-focus
+        bg-gray-900
         lg:rounded-xl
         w-full
         rounded-none
         pointer-events-auto 
+        backdrop-blur-xl
+        bg-opacity-50
         `}
       >
-        <div className="card-body text-white w-full h-fit flex lg:flex-row flex-col">
+        <div className="card-body w-full h-fit flex lg:flex-row flex-col ">
           <button
-            className={`btn my-auto lg:w-20  w-full flex-row justify-center align-middle ${
+            className={`btn my-auto lg:w-20 w-full flex-row justify-center align-middle ${
               playStatus === PlayStatus.LOADING ? 'loading px-0' : ''
             } `}
             onClick={handlePlayPause}
