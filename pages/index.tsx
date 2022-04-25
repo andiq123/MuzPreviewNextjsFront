@@ -11,7 +11,6 @@ import Song from '../components/song';
 import { PaginatedResult } from '../models/paginated-result';
 import { SongType } from '../models/song';
 import usePlayerContext from '../store/PlayerContext';
-import { replaceStateWithQuery } from '../utils/utils';
 
 interface Props {
   serverPaginatedResult: PaginatedResult<SongType[]> | null;
