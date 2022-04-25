@@ -53,12 +53,8 @@ const Home: NextPage<Props> = ({ serverPaginatedResult, error }: Props) => {
     setPaginatedResult(result);
   };
 
-  const [searchLoading, setSearchLoading] = useState(false);
-
   const router = useRouter();
   const handleSearch = async (searchValue: string, page = 1) => {
-    setSearchLoading(true);
-
     try {
       const results = searchValue
         ? await agent.Songs.list(searchValue, page)
@@ -71,7 +67,6 @@ const Home: NextPage<Props> = ({ serverPaginatedResult, error }: Props) => {
     } catch (error) {
       setLoadedResult(null, true);
     }
-    setSearchLoading(false);
   };
 
   return (
@@ -83,7 +78,7 @@ const Home: NextPage<Props> = ({ serverPaginatedResult, error }: Props) => {
           </title>
         </Head>
       </div>
-      <SearchBar handleSearch={handleSearch} loading={searchLoading} />
+      <SearchBar handleSearch={handleSearch} />
 
       {errorSongs || !paginatedResult ? (
         <animated.div

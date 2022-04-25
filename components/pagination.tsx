@@ -1,4 +1,5 @@
 import { useRouter } from 'next/router';
+import { useState } from 'react';
 import { PaginatedResult } from '../models/paginated-result';
 import { SongType } from '../models/song';
 
@@ -9,6 +10,7 @@ interface Props {
 
 const Pagination = ({ pagination, handleSearch }: Props) => {
   const router = useRouter();
+  const [loadingIndex, setLoadingIndex] = useState<number | null>(null);
 
   const pages = new Array(
     pagination.totalPages < pagination.pageNumber
@@ -22,8 +24,12 @@ const Pagination = ({ pagination, handleSearch }: Props) => {
     if (page === pagination.pageNumber) {
       return;
     }
+    setLoadingIndex(page);
     const searchValue = router.query.query as string;
+
     await handleSearch(searchValue, page);
+
+    setLoadingIndex(null);
     router.push(`/?query=${searchValue}&page=${page}`, undefined, {
       shallow: true,
       scroll: true,
@@ -38,7 +44,7 @@ const Pagination = ({ pagination, handleSearch }: Props) => {
           onClick={(e) => handlePageClick(x)}
           className={`btn bg-opacity-50 border-none ${
             pagination.pageNumber === x ? 'btn-active' : ''
-          }`}
+          } ${loadingIndex === x ? 'loading' : ''}`}
         >
           {x}
         </button>

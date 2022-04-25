@@ -3,20 +3,24 @@ import { useState } from 'react';
 import usePlayerContext from '../store/PlayerContext';
 
 interface Props {
-  handleSearch: (searchValue: string) => void;
-  loading: boolean;
+  handleSearch: (searchValue: string) => Promise<void>;
 }
 
-const SearchBar = ({ handleSearch, loading }: Props) => {
+const SearchBar = ({ handleSearch }: Props) => {
   const { autoPlay, SetAutoPlay } = usePlayerContext();
   const router = useRouter();
   const [searchValue, setSearchValue] = useState<string>(
     decodeURI((router.query.query as string) || '') || ''
   );
+  const [loading, setLoading] = useState(false);
 
   const handleSearchClick = async (e: any) => {
     e.preventDefault();
-    handleSearch(searchValue);
+    setLoading(true);
+
+    await handleSearch(searchValue);
+
+    setLoading(false);
   };
 
   return (
