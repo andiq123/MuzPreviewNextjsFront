@@ -28,11 +28,11 @@ const SearchBar = ({ handleSearch, loading }: Props) => {
               name="search"
               type="text"
               placeholder="Search a song..."
-              className="input input-bordered w-full max-w-xs bg-opacity-50"
+              className="input input-bordered w-full bg-opacity-50"
               value={searchValue}
               onInput={(e: any) => setSearchValue(e.target.value)}
             />
-            <div className="card-actions justify-center lg:my-auto mt-2 ">
+            <div className="card-actions justify-center lg:my-auto mt-2">
               <button
                 className={`btn border-none bg-opacity-50 lg:w-32 w-full ${
                   loading && 'loading'
