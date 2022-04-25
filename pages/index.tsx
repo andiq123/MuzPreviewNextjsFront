@@ -79,7 +79,7 @@ const Home: NextPage<Props> = ({ serverPaginatedResult, error }: Props) => {
           ))}
         </animated.div>
       )}
-      <div className="mb-36">
+      <div className="lg:mb-36 mb-60">
         {!errorSongs && paginatedResult && paginatedResult.totalPages > 0 && (
           <Pagination pagination={paginatedResult!} />
         )}

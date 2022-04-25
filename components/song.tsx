@@ -100,7 +100,7 @@ const Song = ({ song }: Props) => {
           <button
             onClick={handleSetCurrentSong}
             disabled={playStatus === PlayStatus.LOADING}
-            className={`btn w-20 my-auto flex-row justify-center align-middle ${
+            className={`btn bg-opacity-50 border-none w-20 my-auto flex-row justify-center align-middle ${
               playLoading ? 'loading px-0' : ''
             }`}
           >
@@ -114,7 +114,7 @@ const Song = ({ song }: Props) => {
           </div>
           <button
             onClick={downloadFile}
-            className={`btn ml-auto my-auto ${
+            className={`btn bg-opacity-50 border-none ml-auto my-auto ${
               loadingDownload && 'loading w-fit'
             }`}
           >

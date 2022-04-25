@@ -182,7 +182,7 @@ const Player = () => {
       >
         <div className="card-body w-full h-fit flex flex-col-reverse lg:flex-row">
           <button
-            className={`btn my-auto lg:w-20 w-full flex-row justify-center align-middle ${
+            className={`btn bg-opacity-50 border-none my-auto lg:w-20 w-full flex-row justify-center align-middle ${
               playStatus === PlayStatus.LOADING ? 'loading px-0' : ''
             } `}
             onClick={handlePlayPause}

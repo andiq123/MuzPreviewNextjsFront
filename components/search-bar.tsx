@@ -58,7 +58,9 @@ const SearchBar = ({ setLoadedResult }: Props) => {
             />
             <div className="card-actions justify-center lg:my-auto mt-2 ">
               <button
-                className={`btn lg:w-32 w-full ${loading && 'loading'}`}
+                className={`btn border-none bg-opacity-50 lg:w-32 w-full ${
+                  loading && 'loading'
+                }`}
                 type="submit"
               >
                 Search
