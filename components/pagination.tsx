@@ -50,7 +50,9 @@ const Pagination = ({ pagination }: Props) => {
           }}
         >
           <button
-            className={`btn ${pagination.pageNumber === x ? 'btn-active' : ''}`}
+            className={`btn bg-opacity-50 border-none ${
+              pagination.pageNumber === x ? 'btn-active' : ''
+            }`}
           >
             {x}
           </button>
