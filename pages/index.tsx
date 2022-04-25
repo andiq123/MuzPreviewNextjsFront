@@ -1,5 +1,6 @@
 import type { NextPage } from 'next';
 import Head from 'next/head';
+import { useRouter } from 'next/router';
 import { useEffect, useMemo, useState } from 'react';
 import { easings, useSpring, animated } from 'react-spring';
 import agent from '../agent/agent';
@@ -10,6 +11,7 @@ import Song from '../components/song';
 import { PaginatedResult } from '../models/paginated-result';
 import { SongType } from '../models/song';
 import usePlayerContext from '../store/PlayerContext';
+import { replaceStateWithQuery } from '../utils/utils';
 
 interface Props {
   serverPaginatedResult: PaginatedResult<SongType[]> | null;
@@ -52,6 +54,27 @@ const Home: NextPage<Props> = ({ serverPaginatedResult, error }: Props) => {
     setPaginatedResult(result);
   };
 
+  const [searchLoading, setSearchLoading] = useState(false);
+
+  const router = useRouter();
+  const handleSearch = async (searchValue: string, page = 1) => {
+    setSearchLoading(true);
+
+    try {
+      const results = searchValue
+        ? await agent.Songs.list(searchValue, page)
+        : await agent.Songs.getMainTracks();
+
+      router.push(`/?query=${searchValue}&page=${page}`, undefined, {
+        shallow: true,
+      });
+      setLoadedResult(results, false);
+    } catch (error) {
+      setLoadedResult(null, true);
+    }
+    setSearchLoading(false);
+  };
+
   return (
     <div className="w-full">
       <div>
@@ -61,7 +84,7 @@ const Home: NextPage<Props> = ({ serverPaginatedResult, error }: Props) => {
           </title>
         </Head>
       </div>
-      <SearchBar setLoadedResult={setLoadedResult} />
+      <SearchBar handleSearch={handleSearch} loading={searchLoading} />
 
       {errorSongs || !paginatedResult ? (
         <animated.div
@@ -81,7 +104,10 @@ const Home: NextPage<Props> = ({ serverPaginatedResult, error }: Props) => {
       )}
       <div className="lg:mb-36 mb-60">
         {!errorSongs && paginatedResult && paginatedResult.totalPages > 0 && (
-          <Pagination pagination={paginatedResult!} />
+          <Pagination
+            pagination={paginatedResult!}
+            handleSearch={handleSearch}
+          />
         )}
       </div>
       <Player />
