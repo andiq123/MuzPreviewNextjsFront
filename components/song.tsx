@@ -138,7 +138,7 @@ const Song = ({ song, setLyricsModal }: Props) => {
           <div className="flex flex-row align-middle ml-auto my-auto gap-5">
             {noLyrics && (
               <p className="my-auto font-bold text-secondary text-xl">
-                No lyrics Found
+                No lyrics found
               </p>
             )}
             <button
