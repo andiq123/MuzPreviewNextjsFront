@@ -66,7 +66,7 @@ const Player = () => {
 
   useEffect(() => {
     changeSrc();
-  }, [currentSong, changeSrc]);
+  }, [currentSong]);
 
   useEffect(() => {
     audioEngine.current!.currentTime = changeTimer;
@@ -124,15 +124,7 @@ const Player = () => {
 
     SetLoading!();
     SetCurrentSong!(nextSong);
-  }, [
-    playStatus,
-    SetCurrentSong,
-    SetLoading,
-    autoPlay,
-    currentSong,
-    handlePlayerPlayStatus,
-    playList,
-  ]);
+  }, [playStatus, SetCurrentSong, SetLoading, autoPlay, currentSong, playList]);
 
   const getSource = async () => {
     const data = await agent.Songs.stream(

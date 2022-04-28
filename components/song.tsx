@@ -55,7 +55,7 @@ const Song = ({ song, setLyricsModal }: Props) => {
       return;
     }
     setIconStatus();
-  }, [playStatus, currentSong?.id, setIconStatus]);
+  }, [playStatus, currentSong?.id, setIconStatus, song.id]);
 
   const handleSetCurrentSong = () => {
     if (currentSong?.id !== song.id) {
