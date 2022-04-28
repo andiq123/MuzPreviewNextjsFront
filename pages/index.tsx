@@ -4,7 +4,7 @@ import { useRouter } from 'next/router';
 import { useEffect, useMemo, useState } from 'react';
 import { easings, useSpring, animated } from 'react-spring';
 import agent from '../agent/agent';
-import { LyricsModal } from '../components/lyrics';
+import { LyricsModal } from '../components/Lyrics';
 import Pagination from '../components/pagination';
 import Player from '../components/player';
 import SearchBar from '../components/search-bar';
