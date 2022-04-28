@@ -41,7 +41,7 @@ const Home: NextPage<Props> = ({ serverPaginatedResult, error }: Props) => {
 
   useEffect(() => {
     SetPlaylist!(songs || []);
-  }, [songs, SetPlaylist]);
+  }, [songs]);
 
   const setLoadedResult = (
     result: PaginatedResult<SongType[]> | null,

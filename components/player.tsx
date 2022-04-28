@@ -53,7 +53,7 @@ const Player = () => {
       SetStopped!();
       setTimer(0);
     };
-  }, [SetPlay, SetStopped]);
+  }, []);
 
   //change src
   const changeSrc = async () => {
@@ -124,7 +124,7 @@ const Player = () => {
 
     SetLoading!();
     SetCurrentSong!(nextSong);
-  }, [playStatus, SetCurrentSong, SetLoading, autoPlay, currentSong, playList]);
+  }, [playStatus]);
 
   const getSource = async () => {
     const data = await agent.Songs.stream(
