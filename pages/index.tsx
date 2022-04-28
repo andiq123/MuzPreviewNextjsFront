@@ -4,6 +4,7 @@ import { useRouter } from 'next/router';
 import { useEffect, useMemo, useState } from 'react';
 import { easings, useSpring, animated } from 'react-spring';
 import agent from '../agent/agent';
+import { LyricsModal } from '../components/Lyrics';
 import Pagination from '../components/pagination';
 import Player from '../components/player';
 import SearchBar from '../components/search-bar';
@@ -69,6 +70,15 @@ const Home: NextPage<Props> = ({ serverPaginatedResult, error }: Props) => {
     }
   };
 
+  const [lyricsModal, setLyricsModal] = useState<{
+    lyrics: string;
+    title: string;
+  } | null>(null);
+
+  const setLyrics = ({ lyrics, title }: { lyrics: string; title: string }) => {
+    setLyricsModal({ lyrics, title });
+  };
+
   return (
     <div className="w-full">
       <div>
@@ -78,6 +88,14 @@ const Home: NextPage<Props> = ({ serverPaginatedResult, error }: Props) => {
           </title>
         </Head>
       </div>
+      {lyricsModal && (
+        <LyricsModal
+          lyrics={lyricsModal?.lyrics}
+          title={lyricsModal?.title}
+          close={() => setLyricsModal(null)}
+        ></LyricsModal>
+      )}
+
       <SearchBar handleSearch={handleSearch} />
 
       {errorSongs || !paginatedResult ? (
@@ -92,7 +110,7 @@ const Home: NextPage<Props> = ({ serverPaginatedResult, error }: Props) => {
       ) : (
         <animated.div style={props} className="mx-auto my-5 lg:w-3/5 w-full">
           {songs?.map((x) => (
-            <Song key={x.id} song={x} />
+            <Song key={x.id} song={x} setLyricsModal={setLyricsModal} />
           ))}
         </animated.div>
       )}

@@ -1,18 +1,25 @@
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { SongType } from '../models/song';
-import { faDownload, faPause, faPlay } from '@fortawesome/free-solid-svg-icons';
+import {
+  faDownload,
+  faMusic,
+  faPause,
+  faPlay,
+} from '@fortawesome/free-solid-svg-icons';
 import { PlayStatus } from '../store/playerReducer';
 import { useEffect, useState } from 'react';
 import usePlayerContext from '../store/PlayerContext';
 import agent from '../agent/agent';
 import { saveAs } from 'file-saver';
 import { trimIfTooLong } from '../utils/utils';
+import { LyricsResponse } from '../utils/interfaces/lyrics-response.interface';
 
 interface Props {
   song: SongType;
+  setLyricsModal: (data: { lyrics: string; title: string }) => void;
 }
 
-const Song = ({ song }: Props) => {
+const Song = ({ song, setLyricsModal }: Props) => {
   const apiUrl = process.env.NEXT_PUBLIC_BASE_URL;
   const { playStatus, currentSong, SetPause, SetPlay, SetCurrentSong } =
     usePlayerContext();
@@ -93,6 +100,21 @@ const Song = ({ song }: Props) => {
     title: trimIfTooLong(song.title),
   };
 
+  const [lyricsLoading, setLyricsLoading] = useState(false);
+  const [noLyrics, setNoLyrics] = useState(false);
+  const getLyrics = async () => {
+    setLyricsLoading(true);
+    const data = await fetch(`api/lyrics?songName=${song.artist}`);
+    const lyricsData: LyricsResponse = await data.json();
+    if (lyricsData.error) {
+      setLyricsLoading(false);
+      setNoLyrics(true);
+      return;
+    }
+    setLyricsLoading(false);
+    setLyricsModal({ lyrics: lyricsData.lyrics!, title: song.artist });
+  };
+
   return (
     <>
       <div className="card w-full bg-base-300 bg-opacity-50 backdrop-blur-3xl my-1 rounded-none lg:rounded-xl shadow-lg">
@@ -112,14 +134,30 @@ const Song = ({ song }: Props) => {
             <p>{song.title}</p>
             <p>{song.duration}</p>
           </div>
-          <button
-            onClick={downloadFile}
-            className={`btn bg-opacity-50 border-none ml-auto my-auto ${
-              loadingDownload && 'loading w-fit'
-            }`}
-          >
-            {!loadingDownload && <FontAwesomeIcon icon={faDownload} />}
-          </button>
+
+          <div className="flex flex-row align-middle ml-auto my-auto gap-5">
+            {noLyrics && (
+              <p className="my-auto font-bold text-secondary text-xl">
+                No lyrics Found
+              </p>
+            )}
+            <button
+              className={`btn bg-opacity-50 border-none ${
+                lyricsLoading && 'loading w-fit'
+              }`}
+              onClick={getLyrics}
+            >
+              <FontAwesomeIcon icon={faMusic} />
+            </button>
+            <button
+              onClick={downloadFile}
+              className={`btn bg-opacity-50 border-none ${
+                loadingDownload && 'loading w-fit'
+              }`}
+            >
+              {!loadingDownload && <FontAwesomeIcon icon={faDownload} />}
+            </button>
+          </div>
         </div>
       </div>
     </>
