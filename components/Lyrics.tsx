@@ -23,8 +23,8 @@ export const LyricsModal = ({ lyrics, title, close }: Props) => {
         <div className="modal-box">
           <h3 className="font-bold text-lg">Lyrics for {title}</h3>
           <div className="py-4">
-            {lines.map((line) => (
-              <p>{line}</p>
+            {lines.map((line, index) => (
+              <p key={index}>{line}</p>
             ))}
           </div>
 

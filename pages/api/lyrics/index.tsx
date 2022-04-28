@@ -3,7 +3,7 @@ import { TrackDetailsResponse } from '../../../utils/interfaces/track-details-re
 const API_KEY = process.env.NEXT_PUBLIC_MUSIXMATCH_API_KEY;
 const BASE_API_URL = 'https://api.musixmatch.com/ws/1.1/';
 
-export default async (
+const handler = async (
   req: NextApiRequest,
   res: NextApiResponse
 ): Promise<void> => {
@@ -47,3 +47,5 @@ export default async (
     return res.status(404).json({ error: 'Not found' });
   }
 };
+
+export default handler;

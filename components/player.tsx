@@ -53,11 +53,20 @@ const Player = () => {
       SetStopped!();
       setTimer(0);
     };
-  }, []);
+  }, [SetPlay, SetStopped]);
+
+  //change src
+  const changeSrc = async () => {
+    if (!currentSong) return;
+    SetLoading!();
+    const src = await getSource();
+    audioEngine.current!.src = src;
+    audioEngine.current!.load();
+  };
 
   useEffect(() => {
     changeSrc();
-  }, [currentSong]);
+  }, [currentSong, changeSrc]);
 
   useEffect(() => {
     audioEngine.current!.currentTime = changeTimer;
@@ -66,6 +75,27 @@ const Player = () => {
   useEffect(() => {
     audioEngine.current!.volume = volume;
   }, [volume]);
+
+  //handle audio engine by status
+  const handlePlayerPlayStatus = () => {
+    switch (playStatus) {
+      case PlayStatus.PAUSED:
+        audioEngine.current?.pause();
+        setIconState(faPlay);
+        break;
+      case PlayStatus.PLAYING:
+        audioEngine.current?.play();
+        setIconState(faPause);
+        break;
+      case PlayStatus.STOPPED:
+        audioEngine.current?.pause();
+        setIconState(faPlay);
+        break;
+      default:
+        setIconState(faPause);
+        break;
+    }
+  };
 
   //handle remote status change
   useEffect(() => {
@@ -94,16 +124,15 @@ const Player = () => {
 
     SetLoading!();
     SetCurrentSong!(nextSong);
-  }, [playStatus]);
-
-  //change src
-  const changeSrc = async () => {
-    if (!currentSong) return;
-    SetLoading!();
-    const src = await getSource();
-    audioEngine.current!.src = src;
-    audioEngine.current!.load();
-  };
+  }, [
+    playStatus,
+    SetCurrentSong,
+    SetLoading,
+    autoPlay,
+    currentSong,
+    handlePlayerPlayStatus,
+    playList,
+  ]);
 
   const getSource = async () => {
     const data = await agent.Songs.stream(
@@ -111,27 +140,6 @@ const Player = () => {
       currentSong?.artist! + currentSong?.duration!
     );
     return apiUrl + data.path;
-  };
-
-  //handle audio engine by status
-  const handlePlayerPlayStatus = () => {
-    switch (playStatus) {
-      case PlayStatus.PAUSED:
-        audioEngine.current?.pause();
-        setIconState(faPlay);
-        break;
-      case PlayStatus.PLAYING:
-        audioEngine.current?.play();
-        setIconState(faPause);
-        break;
-      case PlayStatus.STOPPED:
-        audioEngine.current?.pause();
-        setIconState(faPlay);
-        break;
-      default:
-        setIconState(faPause);
-        break;
-    }
   };
 
   //set status by opositing status

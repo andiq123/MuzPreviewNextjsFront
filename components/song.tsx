@@ -27,13 +27,35 @@ const Song = ({ song, setLyricsModal }: Props) => {
   const [loadingDownload, setDownloadLoading] = useState(false);
   const [playLoading, setPlayLoading] = useState(false);
 
+  //set the icon status direct
+  const setIconStatus = () => {
+    switch (playStatus) {
+      case PlayStatus.PLAYING:
+        setIconState(faPause);
+        setPlayLoading(false);
+        break;
+      case PlayStatus.PAUSED:
+        setIconState(faPlay);
+        break;
+      case PlayStatus.STOPPED:
+        setIconState(faPlay);
+        break;
+      case PlayStatus.LOADING:
+        setPlayLoading(true);
+        break;
+      default:
+        setIconState(faPlay);
+        break;
+    }
+  };
+
   useEffect(() => {
     if (currentSong?.id !== song.id) {
       setIconState(faPlay);
       return;
     }
     setIconStatus();
-  }, [playStatus]);
+  }, [playStatus, currentSong?.id, setIconStatus]);
 
   const handleSetCurrentSong = () => {
     if (currentSong?.id !== song.id) {
@@ -57,28 +79,6 @@ const Song = ({ song, setLyricsModal }: Props) => {
         break;
       default:
         SetPause!();
-        break;
-    }
-  };
-
-  //set the icon status direct
-  const setIconStatus = () => {
-    switch (playStatus) {
-      case PlayStatus.PLAYING:
-        setIconState(faPause);
-        setPlayLoading(false);
-        break;
-      case PlayStatus.PAUSED:
-        setIconState(faPlay);
-        break;
-      case PlayStatus.STOPPED:
-        setIconState(faPlay);
-        break;
-      case PlayStatus.LOADING:
-        setPlayLoading(true);
-        break;
-      default:
-        setIconState(faPlay);
         break;
     }
   };
