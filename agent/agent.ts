@@ -14,7 +14,7 @@ const requests = {
 
 const Songs = {
   list: (query: string, page = 1): Promise<PaginatedResult<SongType[]>> =>
-    requests.get(`/search?query=${query}&page=${page}`),
+    requests.get(encodeURI(`/search?query=${query}&page=${page}`)),
   stream: (link: string, name: string) =>
     requests.post(`/stream`, { url: link, name }),
   getMainTracks: (): Promise<PaginatedResult<SongType[]>> =>
