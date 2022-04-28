@@ -30,7 +30,7 @@ export const LyricsModal = ({ lyrics, title, close }: Props) => {
 
           <div className="modal-action">
             <button onClick={close} className="btn w-full">
-              Close Lyrics
+              Close
             </button>
           </div>
         </div>
